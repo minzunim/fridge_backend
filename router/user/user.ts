@@ -53,7 +53,27 @@ router.post("/login", async (req: Request, res: Response) => {
 
         if (!isMatchPassword) return res.json({ code: 401, msg: `아이디 또는 비밀번호를 확인해주세요.`, data: null });
 
+        req.session.userId = id;
+
         res.json({ code: 200, msg: `로그인 성공`, data: null });
+
+    } catch (err) {
+        console.log(err);
+        res.json({ code: 500, msg: `서버 오류`, data: null });
+    }
+});
+
+// 로그아웃
+router.post("/logout", async (req: Request, res: Response) => {
+
+    if (req.session) {
+        req.session.destroy(() => {
+            res.redirect('/');
+        });
+    }
+
+    try {
+        res.json({ code: 200, msg: `로그아웃 성공`, data: null });
 
     } catch (err) {
         console.log(err);
