@@ -1,6 +1,8 @@
 import { Router, Request, Response } from "express";
-const bcrypt = require('bcrypt');
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 import db from "../../src/database";
+import { generateToken } from "../../utils/jwt";
 
 const router = Router();
 
@@ -53,9 +55,17 @@ router.post("/login", async (req: Request, res: Response) => {
 
         if (!isMatchPassword) return res.json({ code: 401, msg: `아이디 또는 비밀번호를 확인해주세요.`, data: null });
 
-        req.session.userId = id;
+        // req.session.userId = id;
 
-        res.json({ code: 200, msg: `로그인 성공`, data: null });
+        const payload = { userId: `${id}` };
+
+        const accessToken = generateToken(payload, 'access');
+        const refreshToken = generateToken(payload, 'refresh');
+
+        const data = { accessToken, refreshToken };
+
+        res.cookie('refresh', refreshToken, { httpOnly: true });
+        res.json({ code: 200, msg: `로그인 성공`, data });
 
     } catch (err) {
         console.log(err);
