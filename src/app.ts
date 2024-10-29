@@ -6,6 +6,7 @@ import sessionFileStore from "session-file-store";
 import cors from "cors";
 
 import user from "../router/user/user";
+import fridge from '../router/fridge/fridge';
 
 const app = express();
 app.use(express.json());
@@ -47,6 +48,7 @@ app.get("/welcome", (req: Request, res: Response) => {
 });
 
 app.use("/user", user);
+app.use("/fridge", fridge);
 
 app.listen('1234', () => {
   console.log(`
