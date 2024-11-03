@@ -64,7 +64,7 @@ router.post("/login", async (req: Request, res: Response) => {
 
         const data = { accessToken, refreshToken };
 
-        res.cookie('refresh', refreshToken, { httpOnly: true });
+        res.cookie("fridge_refresh", refreshToken, { httpOnly: true });
         res.json({ code: 200, msg: `로그인 성공`, data });
 
     } catch (err) {
@@ -76,13 +76,18 @@ router.post("/login", async (req: Request, res: Response) => {
 // 로그아웃
 router.post("/logout", async (req: Request, res: Response) => {
 
-    if (req.session) {
+    /*if (req.session) {
         req.session.destroy(() => {
             res.redirect('/');
         });
     }
+    */
 
     try {
+        res.cookie("fridge_refresh", null, {
+            maxAge: 0
+        });
+
         res.json({ code: 200, msg: `로그아웃 성공`, data: null });
 
     } catch (err) {
