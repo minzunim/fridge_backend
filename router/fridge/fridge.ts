@@ -34,64 +34,30 @@ router.post("/create", async (req: Request, res: Response) => {
     }
 });
 
-// 아이템 리스트 조회
-router.get("/list", async (req: Request, res: Response) => {
+// 냉장고 칸별 아이템 리스트 조회
+router.get("/list/:position", async (req: Request, res: Response) => {
 
+    const position = req.params.position;
     const register = 1; // 하드코딩 (나중에 req.body로 바꿔야 함)
 
     try {
 
         const findSql = `SELECT * FROM product 
-                            WHERE register = ${register} 
+                            WHERE register = ${register}
+                            AND position = ${position}
                             AND is_deleted = 'N'
-                            ORDER BY position ASC`;
+                            ORDER BY expire_date ASC`;
 
         const findRes = await db.query(findSql);
 
         if (!findRes.length) return [];
 
-        const uniquePostion = [...new Set(findRes.map((item: any) => item.position))];
-        console.log("🚀 ~ router.get ~ uniquePostion:", uniquePostion);
-
-        let list = [];
-
-        for (const position of uniquePostion) {
-            console.log("🚀 ~ router.get ~ position:", position);
-            const filterItemList = findRes.filter((item: any) => item.position === position);
-            console.log("🚀 ~ router.get ~ filterItemList:", filterItemList);
-
-            list.push({
-                position,
-                list: filterItemList
-            });
-        }
-
-        /*{
-            position: 1,
-                list: [
-                {
-                    idx: 1,
-                    title: '사과',
-                    expire_date: '2024-09-25',
-                    register_date: '2024-09-25 00:00:00',
-                    modify_date: null,
-                    memo: '',
-                    regitser: 1.
-                    count: 1,
-                    position: 1
-                    is_deleted: 'N'
-                }, ...
-            ], ...
-        }*/
-
-        res.json({ code: 200, msg: `리스트 조회 성공`, data: list });
+        return res.json({ code: 200, msg: `리스트 조회 성공`, data: findRes });
 
     } catch (err) {
         console.log(err);
         res.json({ code: 500, msg: `서버 오류`, data: null });
     }
 });
-
-
 
 export default router;
