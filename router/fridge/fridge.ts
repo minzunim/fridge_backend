@@ -48,8 +48,6 @@ router.get("/list/:position", async (req: Request, res: Response) => {
 
         const findRes = await db.query(findSql);
 
-        if (!findRes.length) return [];
-
         return res.json({ code: 200, msg: `리스트 조회 성공`, data: findRes });
 
     } catch (err) {
@@ -70,8 +68,6 @@ router.get("/detail/:product_no", async (req: Request, res: Response) => {
                             WHERE idx = ${product_no}`;
 
         const findRes = await db.query(findSql);
-
-        if (!findRes.length) return [];
 
         return res.json({ code: 200, msg: `아이템 상세 조회 성공`, data: findRes[0] });
 
